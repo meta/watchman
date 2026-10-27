@@ -317,11 +317,21 @@ jobs:
   mac-build:
     continue-on-error: true
     needs: prepare
-    runs-on: macOS-10.15
+    runs-on: macOS-latest
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
+      CC: /opt/homebrew/opt/llvm/bin/clang
+      CXX: /opt/homebrew/opt/llvm/bin/clang++
     steps:
       - uses: actions/checkout@v4
+      - name: Install Homebrew LLVM
+        run: brew install llvm
+      - name: Install Rust Stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install system deps
+        run: python3 build/fbcode_builder/getdeps.py --allow-system-packages install-system-deps --recursive watchman
       - name: Build watchman
-        run: "SDKROOT=$(xcrun --show-sdk-path --sdk macosx11.1) python3 build/fbcode_builder/getdeps.py --allow-system-packages build --src-dir=. watchman  --project-install-prefix watchman:/usr/local"
+        run: "python3 build/fbcode_builder/getdeps.py --allow-system-packages build --src-dir=. watchman  --project-install-prefix watchman:/usr/local"
       - name: Copy artifacts
         run: "python3 build/fbcode_builder/getdeps.py --allow-system-packages fixup-dyn-deps --src-dir=. watchman _artifacts/mac  --project-install-prefix watchman:/usr/local --final-install-prefix /usr/local"
       - name: Test watchman

@@ -90,6 +90,9 @@ $ sudo port install watchman
    [latest release](https://github.com/facebook/watchman/releases/latest)
 2. It will be named something like `watchman-vYYYY.MM.DD.00-macos.zip`
 
+The macOS binaries are built for Apple Silicon. On an Intel Mac, use Homebrew or
+MacPorts above, or build from source.
+
 ```bash
 $ unzip watchman-*-macos.zip
 $ cd watchman-vYYYY.MM.DD.00-macos
