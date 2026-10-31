@@ -130,12 +130,21 @@ void LocalFileResult::batchFetchProperties(
     }
 
     if (localFile->neededProperties() & FileResult::Property::ContentSha1) {
-      // TODO: find a way to reference a ContentHashCache instance
-      // that will work with !InMemoryView based views.
-      localFile->contentSha1_ = makeResultWith([&] {
-        return ContentHashCache::computeHashImmediate(
-            localFile->fullPath_.c_str());
-      });
+      // Only compute content hashes for regular files. This matches
+      // InMemoryFileResult semantics and prevents following symlinks.
+      if (!localFile->info_->isFile()) {
+        localFile->contentSha1_ = makeResultWith([]() -> FileResult::ContentHash {
+          throw std::system_error(
+              std::make_error_code(std::errc::is_a_directory));
+        });
+      } else {
+        // TODO: find a way to reference a ContentHashCache instance
+        // that will work with !InMemoryView based views.
+        localFile->contentSha1_ = makeResultWith([&] {
+          return ContentHashCache::computeHashNoFollow(
+              localFile->fullPath_.c_str());
+        });
+      }
     }
 
     localFile->clearNeededProperties();
