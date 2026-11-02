@@ -5,7 +5,7 @@ shipit_project = fb303
 shipit_fbcode_builder = true
 
 [git]
-repo_url = https://github.com/facebook/fb303.git
+repo_url = https://github.com/meta/fb303.git
 
 [cargo]
 cargo_config_file = source/fb303/thrift/.cargo/config.toml

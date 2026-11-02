@@ -5,7 +5,7 @@ shipit_project = proxygen
 shipit_fbcode_builder = true
 
 [git]
-repo_url = https://github.com/facebook/proxygen.git
+repo_url = https://github.com/meta/proxygen.git
 
 [build.os=windows]
 builder = nop

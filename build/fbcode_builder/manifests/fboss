@@ -5,7 +5,7 @@ shipit_project = fboss
 shipit_fbcode_builder = true
 
 [git]
-repo_url = https://github.com/facebook/fboss.git
+repo_url = https://github.com/meta/fboss.git
 
 [build.os=linux]
 builder = cmake

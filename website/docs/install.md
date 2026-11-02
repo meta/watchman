@@ -32,14 +32,14 @@ the list above.
 ### Prebuilt Binaries
 
 1. Download and extract the windows release from the
-   [latest release](https://github.com/facebook/watchman/releases/latest)
+   [latest release](https://github.com/meta/watchman/releases/latest)
 2. It will be named something like `watchman-vYYYY.MM.DD.00-windows.zip`
 3. It contains a `bin` folder. Move that somewhere appropriate and update your
    `PATH` environment to reference that location.
 
 If you encounter issues with the Windows version of watchman, please report them
 via GitHub!
-[You can find the list of known Windows issues here](https://github.com/facebook/watchman/issues?utf8=%E2%9C%93&q=is%3Aopen+Windows).
+[You can find the list of known Windows issues here](https://github.com/meta/watchman/issues?utf8=%E2%9C%93&q=is%3Aopen+Windows).
 
 ### Installing via Chocolatey
 
@@ -87,7 +87,7 @@ $ sudo port install watchman
 ### Prebuilt Binaries
 
 1. Download and extract the macOS release from the
-   [latest release](https://github.com/facebook/watchman/releases/latest)
+   [latest release](https://github.com/meta/watchman/releases/latest)
 2. It will be named something like `watchman-vYYYY.MM.DD.00-macos.zip`
 
 ```bash
@@ -117,7 +117,7 @@ Follow the [macOS instructions above](#homebrew-instructions).
 missing security, bug, and performance fixes.
 
 1. From the
-   [latest release](https://github.com/facebook/watchman/releases/latest),
+   [latest release](https://github.com/meta/watchman/releases/latest),
    download the .rpm corresponding to your Fedora version
 2. `sudo dnf localinstall watchman-$VERSION.fc$FEDORA_VERSION.x86_64.rpm`
 3. Confirm successful installation by running `watchman version`
@@ -128,7 +128,7 @@ missing security, bug, and performance fixes.
 missing security, bug, and performance fixes.
 
 1. From the
-   [latest release](https://github.com/facebook/watchman/releases/latest),
+   [latest release](https://github.com/meta/watchman/releases/latest),
    download the .deb corresponding to your Ubuntu version
 2. `sudo dpkg -i watchman_$UBUNTU_RELEASE_$VERSION.deb`
 3. You will likely see errors about unresolved dependencies. The next step will
@@ -139,8 +139,8 @@ missing security, bug, and performance fixes.
 ### <a name="building-from-source"></a> Building from Source
 
 Download a
-[source snapshot from the latest release](https://github.com/facebook/watchman/releases/latest)
-or [clone from GitHub](https://github.com/facebook/watchman/).
+[source snapshot from the latest release](https://github.com/meta/watchman/releases/latest)
+or [clone from GitHub](https://github.com/meta/watchman/).
 
 ```bash
 $ cd watchman
@@ -161,7 +161,7 @@ binaries for v4.9.0.
 
 **Note**: The Linux binaries are compiled on a GitHub Action VM (ubuntu-20.04 at
 the time of this writing), and Linux binaries are
-[not generally compatible across distributions](https://github.com/facebook/watchman/issues/1019),
+[not generally compatible across distributions](https://github.com/meta/watchman/issues/1019),
 so try the prebuilt Fedora, Ubuntu, or Homebrew packages first.
 
 Watchman is continuously deployed as it passes our internal test validation
@@ -172,7 +172,7 @@ each week and assigns a tag based on the date. That process is in a beta state;
 some or all of the binaries may not be present for any given tag.
 
 1. Download and extract the release for your system from the
-   [latest release](https://github.com/facebook/watchman/releases/latest)
+   [latest release](https://github.com/meta/watchman/releases/latest)
 2. It will be named something like `watchman-vYYYY.MM.DD.00-linux.zip`
 
 ```bash

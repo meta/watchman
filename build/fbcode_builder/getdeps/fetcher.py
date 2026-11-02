@@ -293,7 +293,7 @@ class GitFetcher(Fetcher):
     ) -> None:
         # Extract the host/path portions of the URL and generate a flattened
         # directory name.  eg:
-        # github.com/facebook/folly.git -> github.com-facebook-folly.git
+        # github.com/meta/folly.git -> github.com-facebook-folly.git
         url = urlparse(repo_url)
         directory = "%s%s%s" % (url.netloc, url.path, branch if branch else "")
         for s in ["/", "\\", ":"]:

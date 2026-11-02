@@ -5,7 +5,7 @@ shipit_project = facebookincubator/socket-lb
 shipit_fbcode_builder = true
 
 [git]
-repo_url = https://github.com/facebookincubator/socket-lb.git
+repo_url = https://github.com/metaincubator/socket-lb.git
 
 [build.not(os=linux)]
 builder = nop

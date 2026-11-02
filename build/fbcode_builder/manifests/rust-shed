@@ -5,7 +5,7 @@ shipit_project = rust-shed
 shipit_fbcode_builder = true
 
 [git]
-repo_url = https://github.com/facebookexperimental/rust-shed.git
+repo_url = https://github.com/metaexperimental/rust-shed.git
 
 [build]
 builder = cargo

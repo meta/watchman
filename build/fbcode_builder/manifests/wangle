@@ -5,7 +5,7 @@ shipit_project = wangle
 shipit_fbcode_builder = true
 
 [git]
-repo_url = https://github.com/facebook/wangle.git
+repo_url = https://github.com/meta/wangle.git
 
 [build]
 builder = cmake

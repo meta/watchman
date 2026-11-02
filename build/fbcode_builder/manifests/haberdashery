@@ -2,7 +2,7 @@
 name = haberdashery
 
 [git]
-repo_url = https://github.com/facebookincubator/haberdashery.git
+repo_url = https://github.com/metaincubator/haberdashery.git
 rev = 13b6e1d445cb70ef7c448b98ea14954a8ca40b63
 
 [build]

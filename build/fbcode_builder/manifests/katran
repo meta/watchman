@@ -5,7 +5,7 @@ shipit_project = katran
 shipit_fbcode_builder = true
 
 [git]
-repo_url = https://github.com/facebookincubator/katran.git
+repo_url = https://github.com/metaincubator/katran.git
 
 [build.not(os=linux)]
 builder = nop

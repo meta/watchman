@@ -11,7 +11,7 @@ include(FBCMakeParseArgs)
 # executable, isolated from other Python packages on the system.  We don't want
 # to install files into the standard library python paths.  This is more
 # similar to PEX (https://github.com/pantsbuild/pex) and XAR
-# (https://github.com/facebookincubator/xar).  (In the future it would be nice
+# (https://github.com/metaincubator/xar).  (In the future it would be nice
 # to update this code to also support directly generating XAR files if XAR is
 # available.)
 #
