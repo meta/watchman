@@ -26,7 +26,7 @@ def is_windows() -> bool:
 DISTRO_FAMILIES: dict[str, tuple[str, ...]] = {
     "rhel": ("rhel", "centos", "centos_stream", "alma", "rocky"),
     "fedora": ("fedora",),
-    "debian": ("debian", "ubuntu", "pop!_os", "mint"),
+    "debian": ("debian", "ubuntu", "pop!_os", "mint", "kali"),
     "arch": ("arch",),
 }
 
@@ -71,7 +71,10 @@ def parse_os_release(data: str) -> tuple[str, str | None, str | None]:
             value = value_parts[0]
         os_vars[key] = value
 
-    name = os_vars.get("NAME")
+    # ID is the machine-readable distribution identifier from os-release.
+    # Prefer it over NAME, whose free-form text can contain path separators
+    # (for example, Kali's NAME="Kali GNU/Linux").
+    name = os_vars.get("ID") or os_vars.get("NAME")
     if name:
         name = name.lower()
         name = re.sub("linux", "", name)

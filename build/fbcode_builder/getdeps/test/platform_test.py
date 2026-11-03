@@ -83,6 +83,21 @@ class OsReleaseTest(unittest.TestCase):
         self.assertEqual(host.distro_family, "debian")
         self.assertEqual(host.get_package_manager(), "deb")
 
+    def test_kali(self) -> None:
+        data = """\
+NAME="Kali GNU/Linux"
+VERSION_ID="2026.3"
+ID=kali
+ID_LIKE=debian
+"""
+        self.assertEqual(
+            parse_os_release(data),
+            ("linux", "kali", "2026.3"),
+        )
+        host = HostType("linux", "kali", "2026.3")
+        self.assertEqual(host.distro_family, "debian")
+        self.assertEqual(host.get_package_manager(), "deb")
+
     def test_unknown_distro_has_no_family(self) -> None:
         host = HostType("linux", "gentoo", None)
         self.assertIsNone(host.distro_family)
