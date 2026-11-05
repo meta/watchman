@@ -145,6 +145,19 @@ cpp_unittest(
 )
 
 cpp_unittest(
+    name = "clockspec",
+    srcs = ["ClockSpecTest.cpp"],
+    network_access = network_access_utils.none(),
+    supports_static_listing = False,
+    deps = [
+        "fbsource//third-party/fmt:fmt",
+        "fbsource//xplat/folly/portability:gtest",
+        "//watchman:clock",
+        "//watchman/thirdparty/jansson:jansson",
+    ],
+)
+
+cpp_unittest(
     name = "string",
     srcs = [
         "StringTest.cpp",
