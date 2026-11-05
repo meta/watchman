@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkstaticdocs_starter=globalThis.webpackChunkstaticdocs_starter||[]).push([[8158],{48158(a,s,t){t.r(s),t.d(s,{DocSearchModal:()=>c.a1});var c=t(55600)}}]);
