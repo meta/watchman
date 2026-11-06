@@ -6,7 +6,7 @@
  */
 
 #include "watchman/InMemoryView.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/ScopeGuard.h>
 #include <algorithm>
 #include <chrono>

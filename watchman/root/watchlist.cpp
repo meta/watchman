@@ -6,7 +6,7 @@
  */
 
 #include "watchman/root/watchlist.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/Synchronized.h>
 #include <vector>
 #include "watchman/QueryableView.h"

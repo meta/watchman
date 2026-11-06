@@ -6,7 +6,7 @@
  */
 
 #include "watchman/CookieSync.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/String.h>
 #include <exception>
 #include <optional>

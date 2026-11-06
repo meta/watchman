@@ -6,7 +6,7 @@
  */
 
 #include "watchman/scm/Git.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/String.h>
 #include <folly/portability/SysTime.h>
 #include "watchman/ChildProcess.h"

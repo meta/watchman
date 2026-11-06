@@ -7,7 +7,7 @@
 
 #include "watchman/bser.h"
 #include <benchmark/benchmark.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <random>
 #include <vector>
 

@@ -6,7 +6,7 @@
  */
 
 #include <cpptoml.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/FBString.h>
 #include <folly/ScopeGuard.h>
 #include <folly/String.h>
