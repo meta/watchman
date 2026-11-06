@@ -67,6 +67,8 @@ class ContentHashCache {
   // Throws exceptions for any errors that may occur.
   static HashValue computeHashImmediate(const char* fullPath);
 
+  static HashValue computeHashNoFollow(const char* fullPath);
+
   // Compute the hash value for a given input via the thread pool.
   // Returns a future to operate on the result of this async operation
   folly::Future<HashValue> computeHash(const ContentHashCacheKey& key) const;
