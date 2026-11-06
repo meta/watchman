@@ -15,7 +15,7 @@ cpp_unittest(
         "//thrift/lib/cpp2/protocol:protocol",
         "//watchman/telemetry:xplat_keys",
         "//watchman/telemetry/facebook:xplat_transforms",
-        "//watchman/telemetry/facebook/if:watchman_events_entry-cpp2-types",
+        "//watchman/telemetry/facebook/if:watchman_events_entry-cpp2-serialization",
     ],
 )
 
@@ -33,6 +33,6 @@ cpp_unittest(
         "fbsource//xplat/folly/json:dynamic",
         "fbsource//xplat/folly/portability:gtest",
         "//thrift/lib/cpp2/op:get",
-        "//watchman/telemetry/facebook/if:watchman_events_entry-cpp2-types",
+        "//watchman/telemetry/facebook/if:watchman_events_entry-cpp2-serialization",
     ],
 )
