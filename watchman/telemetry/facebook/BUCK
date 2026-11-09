@@ -10,7 +10,7 @@ cpp_library(
         "//eden/common/telemetry:log_info",
         "//scribe/api/producer/structured:compact_message",
         "//watchman/telemetry:xplat_keys",
-        "//watchman/telemetry/facebook/if:watchman_events_entry-cpp2-types",
+        "//watchman/telemetry/facebook/if:watchman_events_entry-cpp2-serialization",
     ],
     exported_deps = [
         "//eden/common/telemetry/facebook:xplat_logger_core",
