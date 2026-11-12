@@ -14,7 +14,7 @@ namespace watchman {
  * This function avoids needing to use chmod which wont work if the user is not
  * a member of the secondary group.
  *
- * @param path The path to to set attributes on
+ * @param path The path to set attributes on
  * @param secondary_group_name The name of the secondary group
  * @param read If the secondary group should be given read permissions
  * @param write If the secondary group should be given write permissions

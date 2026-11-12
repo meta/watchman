@@ -937,7 +937,7 @@ class EdenView final : public QueryableView {
   void pathGenerator(const Query* query, QueryContext* ctx) const override {
     ctx->generationStarted();
     ctx->generatorType = "eden_path";
-    // If the query is anchored to a relative_root, use that that
+    // If the query is anchored to a relative_root, use that to
     // avoid sucking down a massive list of files from eden
     auto rel = computeRelativePathPiece(ctx);
 
@@ -987,7 +987,7 @@ class EdenView final : public QueryableView {
 
     ctx->generationStarted();
     ctx->generatorType = "eden_glob";
-    // If the query is anchored to a relative_root, use that that
+    // If the query is anchored to a relative_root, use that to
     // avoid sucking down a massive list of files from eden
     auto rel = computeRelativePathPiece(ctx);
 

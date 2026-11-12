@@ -61,7 +61,7 @@ class TestEdenJournal(WatchmanEdenTestCase.WatchmanEdenTestCase):
             message="We expect to report the files changed in the commit",
         )
 
-        # Test the the journal has the correct contents across a "reset" like
+        # Test the journal has the correct contents across a "reset" like
         # operation where the parents are poked directly.   This is using
         # debugsetparents rather than reset because the latter isn't enabled
         # by default for hg in the watchman test machinery.
