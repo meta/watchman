@@ -7,7 +7,7 @@
 
 #include "watchman/fs/DirHandle.h"
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/String.h>
 #include <system_error>
 #include "watchman/Logging.h"

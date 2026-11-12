@@ -6,7 +6,7 @@
  */
 
 #include "watchman/bser.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/ScopeGuard.h>
 #include <folly/logging/xlog.h>
 #include <folly/portability/GTest.h>

@@ -7,7 +7,7 @@
 
 #include "watchman/PathUtils.h"
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/Exception.h>
 #include <folly/String.h>
 #include <folly/portability/Fcntl.h>

@@ -15,7 +15,7 @@
 
 #include "watchman/portability/Backtrace.h"
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <array>
 #include <limits>
 #include <optional>
