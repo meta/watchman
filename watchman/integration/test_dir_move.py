@@ -61,3 +61,45 @@ class TestDirMove(WatchmanTestCase.WatchmanTestCase):
         self.build_under(root, "dir", latency=1)
 
         self.assertFileList(root, ["dir", "dir/a"])
+
+    def test_renameDirThenCreateChild(self) -> None:
+        # Regression test: after renaming a watched directory in-tree,
+        # file operations inside the renamed directory must be reported
+        # under the new parent name, not the pre-rename path.
+        #
+        # On Linux/inotify, the IN_MOVED_TO handler previously had an
+        # impossible mask check that left the watcher's wd -> name map
+        # stale after an in-tree directory rename, so subsequent
+        # IN_CREATE/IN_DELETE events on the renamed directory's children
+        # were synthesized under the old parent name and surfaced as
+        # phantom entries.
+        root = self.mkdtemp()
+        old_dir = os.path.join(root, "src")
+        new_dir = os.path.join(root, "dst")
+
+        os.mkdir(old_dir)
+        self.touchRelative(old_dir, "a")
+
+        self.watchmanCommand("watch", root)
+        self.assertFileList(root, ["src", "src/a"])
+
+        clock = self.watchmanCommand("clock", root)["clock"]
+
+        os.rename(old_dir, new_dir)
+        self.touchRelative(new_dir, "b")
+
+        # The settled file list must reflect the rename and the new child.
+        self.assertFileList(root, ["dst", "dst/a", "dst/b"])
+
+        # The since-cursor change set must include dst/b and must not
+        # contain a phantom src/b that would appear if the wd -> name
+        # map were stale.
+        res = self.watchmanCommand(
+            "query",
+            root,
+            {"since": clock, "expression": ["exists"], "fields": ["name"]},
+        )
+        names = set(res["files"])
+        self.assertIn("dst/b", names)
+        self.assertNotIn("src/b", names)
+        self.assertNotIn("src/a", names)
