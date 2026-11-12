@@ -62,3 +62,18 @@ class TestAgeOutWatch(WatchmanTestCase.WatchmanTestCase):
             self.assertWaitFor(
                 lambda: not self.rootIsWatched(root) and not self.rootIsWatched(second)
             )
+
+    def test_sanityCheckDoesNotPreventReap(self) -> None:
+        # The sanity check runs `clock` against every root once a minute.
+        # That must not count as activity, or a root whose reap age is
+        # longer than the check interval can never be reaped.
+        root = self.mkdtemp()
+        with open(os.path.join(root, ".watchmanconfig"), "w") as f:
+            f.write(json.dumps({"idle_reap_age_seconds": 70}))
+        self.watchmanCommand("watch", root)
+
+        self.assertWaitFor(
+            lambda: not self.rootIsWatched(root),
+            timeout=180,
+            message="%s should have been reaped" % root,
+        )
