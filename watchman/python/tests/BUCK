@@ -14,5 +14,6 @@ python_unittest(
     supports_static_listing = False,
     deps = [
         "//watchman/python/pywatchman:pywatchman",
+        "//watchman/python/pywatchman_aio:pywatchman_aio",
     ],
 )
