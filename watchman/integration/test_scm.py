@@ -26,6 +26,64 @@ def is_ubuntu() -> bool:
 
 @WatchmanTestCase.expand_matrix
 class TestScm(WatchmanSCMTestCase.WatchmanSCMTestCase):
+    def test_scm_symlink_content_hash_does_not_follow(self) -> None:
+        self.skipIfNoFSMonitor()
+
+        root = self.mkdtemp()
+        outside_dir = self.mkdtemp()
+        outside = os.path.join(outside_dir, "outside-content")
+
+        with open(outside, "w") as f:
+            f.write("content outside the watched repository\n")
+
+        self.hg(["init"], cwd=root)
+
+        victim = os.path.join(root, "victim")
+        with open(victim, "w") as f:
+            f.write("tracked baseline\n")
+
+        self.hg(["add", "victim"], cwd=root)
+        self.hg(["commit", "-m", "baseline"], cwd=root)
+        self.hg(["book", "main"], cwd=root)
+
+        self.watchmanCommand("watch", root)
+
+        os.unlink(victim)
+        os.symlink(outside, victim)
+
+        # Shared Watchman instances may permit non-owner clients to query an
+        # existing owner-created watch.  Simulate that authorization boundary
+        # on this persistent connection before requesting the content hash.
+        dropped = self.watchmanCommand("debug-drop-privs")
+        self.assertFalse(dropped["owner"])
+
+        res = self.watchmanCommand(
+            "query",
+            root,
+            {
+                "expression": ["name", "victim"],
+                "fields": [
+                    "name",
+                    "type",
+                    "symlink_target",
+                    "content.sha1hex",
+                ],
+                "since": {
+                    "scm": {
+                        "mergebase-with": "main",
+                    }
+                },
+            },
+        )
+
+        self.assertEqual(len(res["files"]), 1)
+        result = res["files"][0]
+
+        self.assertEqual(result["name"], "victim")
+        self.assertEqual(result["type"], "l")
+        self.assertEqual(result["symlink_target"], outside)
+        self.assertIsNone(result["content.sha1hex"])
+
     def test_not_supported(self) -> None:
         root = self.mkdtemp()
         self.watchmanCommand("watch", root)

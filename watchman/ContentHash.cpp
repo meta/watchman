@@ -55,15 +55,12 @@ folly::Future<std::shared_ptr<const Node>> ContentHashCache::get(
       key, [this](const ContentHashCacheKey& k) { return computeHash(k); });
 }
 
-HashValue ContentHashCache::computeHashImmediate(const char* fullPath) {
+static HashValue hashStream(
+    std::unique_ptr<watchman_stream> stm,
+    const char* fullPath) {
   HashValue result;
   uint8_t buf[8192];
 
-  auto stm = w_stm_open(fullPath, O_RDONLY);
-  if (!stm) {
-    throw std::system_error(
-        errno, std::generic_category(), fmt::format("w_stm_open {}", fullPath));
-  }
 
 #ifndef _WIN32
   SHA_CTX ctx;
@@ -136,6 +133,32 @@ HashValue ContentHashCache::computeHashImmediate(const char* fullPath) {
   }
 #endif
   return result;
+}
+
+
+HashValue ContentHashCache::computeHashImmediate(const char* fullPath) {
+  auto stm = w_stm_open(fullPath, O_RDONLY);
+  if (!stm) {
+    throw std::system_error(
+        errno, std::generic_category(), fmt::format("w_stm_open {}", fullPath));
+  }
+  return hashStream(std::move(stm), fullPath);
+}
+
+HashValue ContentHashCache::computeHashNoFollow(const char* fullPath) {
+  OpenFileHandleOptions opts;
+  opts.readContents = 1;
+  opts.followSymlinks = 0;
+
+  auto fd = openFileHandle(fullPath, opts);
+  auto info = fd.getInfo();
+
+  if (!info.isFile()) {
+    throw std::system_error(
+        std::make_error_code(std::errc::invalid_argument));
+  }
+
+  return hashStream(w_stm_fdopen(std::move(fd)), fullPath);
 }
 
 HashValue ContentHashCache::computeHashImmediate(
