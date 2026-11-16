@@ -7,7 +7,7 @@
 
 #include "watchman/query/GlobTree.h"
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/Range.h>
 
 namespace watchman {

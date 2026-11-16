@@ -6,7 +6,7 @@
  */
 
 #pragma once
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/Synchronized.h>
 #include <folly/futures/Future.h>
 #include <chrono>

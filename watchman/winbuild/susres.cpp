@@ -6,7 +6,7 @@
  */
 
 #include <errno.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>

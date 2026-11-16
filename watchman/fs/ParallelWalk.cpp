@@ -6,7 +6,7 @@
  */
 
 #include "watchman/fs/ParallelWalk.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/concurrency/UnboundedQueue.h>
 #include <folly/executors/CPUThreadPoolExecutor.h>
 #include <folly/system/HardwareConcurrency.h>

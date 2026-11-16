@@ -6,7 +6,7 @@
  */
 
 #include "watchman/ContentHash.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/ScopeGuard.h>
 #include <string>
 #include "watchman/Hash.h"
