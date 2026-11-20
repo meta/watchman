@@ -5,7 +5,7 @@ name = libunwind
 libunwind-devel
 libunwind
 
-# on ubuntu this brings in liblzma-dev, which in turn breaks watchman tests
+# libunwind < 1.8.0 breaks watchman tests
 [debs.not(distro=ubuntu)]
 libunwind-dev
 
