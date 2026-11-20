@@ -1045,7 +1045,7 @@ nupkg.builder(
             "fbcode//watchman/python/bin:watchman-make",
             "fbcode//watchman/python/bin:watchman-replicate-subscription",
             "fbcode//watchman/python/bin:watchman-wait",
-            "fbsource//third-party/rust:deelevate-eledo-pty-bridge",
+            "fbsource//third-party/rust:utils-eledo-pty-bridge",
         ],
     }),
 )
