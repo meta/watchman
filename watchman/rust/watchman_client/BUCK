@@ -7,6 +7,10 @@ rust_library(
     name = "watchman_client",
     srcs = glob(["src/**/*.rs"]),
     preferred_linkage = "static",
+    test_deps = select({
+        "DEFAULT": ["fbsource//third-party/rust:tempfile"],
+        "ovr_config//os:windows": [],
+    }),
     deps = [
         "fbsource//third-party/rust:anyhow",
         "fbsource//third-party/rust:bytes",
