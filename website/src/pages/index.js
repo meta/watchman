@@ -79,7 +79,7 @@ export default function Home() {
             These two lines establish a watch on a source directory and then set
             up a trigger named buildme that will run a tool named{' '}
             <code>minify-css</code>
-            whenever a CSS file is changed. The tool will be passed a list of
+            whenever a CSS file is changed. The tool will pass a list of
             the changed filenames.
           </p>
           <CodeBlock language="bash">
