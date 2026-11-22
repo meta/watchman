@@ -259,6 +259,23 @@ class AIOClient:
         self._check_error(res)
         return res
 
+
+    async def watch_subscription(self, name, root):
+        """Async generator that yields watchman subscription events
+
+        If root is not None, then only yield the subscription
+        data that matches both root and name.  When used in this way,
+        remove processing impacts both the unscoped and scoped stores
+        for the subscription data.
+        """
+        self._check_receive_loop()
+        self._ensure_subscription_queue_exists(name, root)
+        subscription_queue = self.sub_by_root[root][name]
+        while res := await subscription_queue.get():
+            self._check_error(res)
+            yield res
+
+
     async def pop_log(self):
         """Get one log from the log queue."""
         self._check_receive_loop()
