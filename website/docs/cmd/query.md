@@ -130,7 +130,7 @@ simple array of values; ~~~"fields": ["name"]~~~ produces:
 
 _Since 3.1._
 
-- `type` - string: the file type. Has the the values listed in
+- `type` - string: the file type. Has the values listed in
   [the type query expression](../expr/type.md)
 
 _Since 4.6._
