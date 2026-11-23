@@ -987,10 +987,10 @@ class TestSubscribe(WatchmanTestCase.WatchmanTestCase):
 
         for _ in range(3):
             self.watchmanCommand("subscribe", root, "my_sub", {"fields": ["name"]})
-        self.assertEqual(["my_sub"], subscriberNames())
+        self.assertWaitForEqual(["my_sub"], subscriberNames())
 
         self.watchmanCommand("unsubscribe", root, "my_sub")
-        self.assertEqual([], subscriberNames())
+        self.assertWaitForEqual([], subscriberNames())
 
     def findSubscriptionContainingFile(self, subdata, filename):
         filename = norm_relative_path(filename)
