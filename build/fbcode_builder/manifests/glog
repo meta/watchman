@@ -50,7 +50,7 @@ HAVE_TR1_UNORDERED_SET=OFF
 [homebrew]
 glog
 
-# on ubuntu glog brings in liblzma-dev, which in turn breaks watchman tests
+# on ubuntu this pulls in libunwind < 1.8.0 which breaks watchman tests
 [debs.not(distro=ubuntu)]
 libgoogle-glog-dev
 
