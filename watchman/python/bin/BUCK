@@ -4,28 +4,24 @@ oncall("scm_client_infra")
 
 python_binary(
     name = "watchman-make",
-    srcs = {"watchman-make": "watchman_make.py"},
-    main_module = "watchman.python.bin.watchman_make",
+    main_function = "pywatchman.watchman_make.main",
     deps = ["//watchman/python/pywatchman:pywatchman"],
 )
 
 python_binary(
     name = "watchman-wait",
-    srcs = {"watchman-wait": "watchman_wait.py"},
-    main_module = "watchman.python.bin.watchman_wait",
+    main_function = "pywatchman.watchman_wait.main",
     deps = ["//watchman/python/pywatchman:pywatchman"],
 )
 
 python_binary(
     name = "watchman-diag",
-    srcs = {"watchman-diag": "watchman_diag.py"},
-    main_module = "watchman.python.bin.watchman_diag",
+    main_function = "pywatchman.watchman_diag.main",
     deps = ["//watchman/python/pywatchman:pywatchman"],
 )
 
 python_binary(
     name = "watchman-replicate-subscription",
-    srcs = {"watchman-replicate-subscription": "watchman_replicate_subscription.py"},
-    main_module = "watchman.python.bin.watchman_replicate_subscription",
+    main_function = "pywatchman.watchman_replicate_subscription.main",
     deps = ["//watchman/python/pywatchman:pywatchman"],
 )
