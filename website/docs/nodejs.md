@@ -281,7 +281,9 @@ on top of this library bubble the warning message up to the user.
 ### client.end()
 
 Terminates the connection to the watchman service. Does not wait for any queued
-commands to send.
+commands to send. Pending commands are cancelled, and results from an in-progress
+connection attempt are ignored. A subsequent command can establish a new
+connection.
 
 ## Events
 

@@ -57,6 +57,7 @@ class Client extends EventEmitter {
   bunser /*: ?BunserBuf */;
   commands /*: Array<Command> */;
   connecting /*: boolean */;
+  connectionGeneration /*: number */;
   currentCommand /*: ?Command */;
   socket /*: ?net.Socket */;
   watchmanBinaryPath /*: string */;
@@ -69,6 +70,7 @@ class Client extends EventEmitter {
       this.watchmanBinaryPath = options.watchmanBinaryPath.trim();
     }
     this.commands = [];
+    this.connectionGeneration = 0;
   }
 
   // Try to send the next queued command, if any
@@ -114,11 +116,19 @@ class Client extends EventEmitter {
   }
 
   connect() {
+    const generation = ++this.connectionGeneration;
+    const isCurrent = () => generation === this.connectionGeneration;
     const makeSock = (sockname /*:string*/) => {
+      if (!isCurrent()) {
+        return;
+      }
       // bunser will decode the watchman BSER protocol for us
       const bunser = (this.bunser = new bser.BunserBuf());
       // For each decoded line:
       bunser.on('value', obj => {
+        if (!isCurrent()) {
+          return;
+        }
         // Figure out if this is a unliteral response or if it is the
         // response portion of a request-response sequence.  At the time
         // of writing, there are only two possible unilateral responses.
@@ -145,31 +155,45 @@ class Client extends EventEmitter {
         }
 
         // See if we can dispatch the next queued command, if any
-        this.sendNextCommand();
+        if (isCurrent()) {
+          this.sendNextCommand();
+        }
       });
       bunser.on('error', err => {
-        this.emit('error', err);
+        if (isCurrent()) {
+          this.emit('error', err);
+        }
       });
 
       const socket = (this.socket = net.createConnection(sockname));
       socket.on('connect', () => {
+        if (!isCurrent()) {
+          return;
+        }
         this.connecting = false;
         this.emit('connect');
-        this.sendNextCommand();
+        if (isCurrent()) {
+          this.sendNextCommand();
+        }
       });
       socket.on('error', err => {
+        if (!isCurrent()) {
+          return;
+        }
         this.connecting = false;
         this.emit('error', err);
       });
       socket.on('data', buf => {
-        if (this.bunser) {
+        if (isCurrent() && this.bunser) {
           this.bunser.append(buf);
         }
       });
-      socket.on('end', () => {
-        this.socket = null;
-        this.bunser = null;
-        this.cancelCommands('The watchman connection was closed');
+      socket.once('end', () => {
+        if (isCurrent()) {
+          this.socket = null;
+          this.bunser = null;
+          this.cancelCommands('The watchman connection was closed');
+        }
         this.emit('end');
       });
     };
@@ -198,7 +222,7 @@ class Client extends EventEmitter {
     const spawnError = (
       error /*: Error | {message: string, code?: string, errno?: string}*/,
     ) => {
-      if (spawnFailed) {
+      if (spawnFailed || !isCurrent()) {
         // For ENOENT, proc 'close' will also trigger with a negative code,
         // let's suppress that second error.
         return;
@@ -231,9 +255,14 @@ class Client extends EventEmitter {
     const stdout = [];
     const stderr = [];
     proc.stdout.on('data', data => {
-      stdout.push(data);
+      if (isCurrent()) {
+        stdout.push(data);
+      }
     });
     proc.stderr.on('data', data => {
+      if (!isCurrent()) {
+        return;
+      }
       data = data.toString('utf8');
       stderr.push(data);
       console.error(data);
@@ -243,6 +272,9 @@ class Client extends EventEmitter {
     });
 
     proc.on('close', (code, signal) => {
+      if (!isCurrent()) {
+        return;
+      }
       if (code !== 0) {
         spawnError(
           new Error(
@@ -354,12 +386,18 @@ class Client extends EventEmitter {
 
   // Close the connection to the service
   end() {
-    this.cancelCommands('The client was ended');
-    if (this.socket) {
-      this.socket.end();
-      this.socket = null;
-    }
+    ++this.connectionGeneration;
+    const socket = this.socket;
+    this.socket = null;
     this.bunser = null;
+    this.connecting = false;
+    try {
+      this.cancelCommands('The client was ended');
+    } finally {
+      if (socket) {
+        socket.end();
+      }
+    }
   }
 }
 
