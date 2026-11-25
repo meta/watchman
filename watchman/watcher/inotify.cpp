@@ -300,7 +300,11 @@ bool InotifyWatcher::process_inotify_event(
     }
 
     if (ine->len > 0 &&
-        (ine->mask & (IN_MOVED_TO | IN_ISDIR)) == (IN_MOVED_FROM | IN_ISDIR)) {
+        (ine->mask & (IN_MOVED_TO | IN_ISDIR)) == (IN_MOVED_TO | IN_ISDIR)) {
+      // A watched directory was renamed inside the watched tree. Refresh
+      // our wd -> name mapping so that subsequent events on children of
+      // the renamed directory report paths under the new parent rather
+      // than the stale pre-rename path.
       auto wlock = maps.wlock();
       auto it = wlock->move_map.find(ine->cookie);
       if (it != wlock->move_map.end()) {
@@ -326,9 +330,25 @@ bool InotifyWatcher::process_inotify_event(
           }
         } else {
           logf(DBG, "moved {} -> {}\n", old.name.c_str(), name.c_str());
-          // TODO: assert that there is no entry in wd_to_name
+          // inotify_add_watch is idempotent and normally returns the same
+          // wd for an in-tree rename. Log if we ever see a different,
+          // already-mapped wd so we can spot wd-reuse anomalies via the
+          // inotify ring log without aborting in production.
+          auto existing = wlock->wd_to_name.find(wd);
+          if (existing != wlock->wd_to_name.end() && existing->second != name) {
+            logf(
+                DBG,
+                "moved: overwriting wd_to_name[{}] {} -> {}\n",
+                wd,
+                existing->second,
+                name);
+          }
           wlock->wd_to_name[wd] = name;
         }
+        // Remove the entry so move_map doesn't accumulate satisfied
+        // moves until the 5s aging pass. Without this, every in-tree
+        // directory rename keeps the cookie hot for up to 5 seconds.
+        wlock->move_map.erase(it);
       } else {
         logf(
             DBG,
