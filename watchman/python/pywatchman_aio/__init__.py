@@ -21,8 +21,8 @@ except ImportError:
     from pywatchman import pybser as bser
 
 
-# 2 bytes marker, 1 byte int size, 8 bytes int64 value
-SNIFF_LEN = 13
+# The payload length can use any of BSER's signed integer encodings.
+_BSER_INT_SIZES = {0x03: 1, 0x04: 2, 0x05: 4, 0x06: 8}
 
 
 # TODO: Fix this when https://github.com/python/asyncio/issues/281 is resolved.
@@ -144,23 +144,37 @@ class AsyncBserCodec(AsyncCodec):
     """Use the BSER encoding."""
 
     async def receive(self):
-        sniff = await self.transport.read(SNIFF_LEN)
-        if not sniff:
-            raise WatchmanError("empty watchman response")
-        _1, _2, elen = bser.pdu_info(sniff)
-        rlen = len(sniff)
-        buf = bytearray(elen)
-        buf[:rlen] = sniff
-        while elen > rlen:
-            b = await self.transport.read(elen - rlen)
-            buf[rlen : rlen + len(b)] = b
-            rlen += len(b)
-        response = bytes(buf)
+        header = await self._read_exactly(2)
+        if header == b"\x00\x02":
+            header += await self._read_exactly(4)
+        elif header != b"\x00\x01":
+            raise WatchmanError("watchman response decode error: invalid BSER header")
+
+        size_encoding = await self._read_exactly(1)
+        size_bytes = _BSER_INT_SIZES.get(size_encoding[0])
+        if size_bytes is None:
+            raise WatchmanError(
+                "watchman response decode error: invalid BSER length encoding"
+            )
+        header += size_encoding + await self._read_exactly(size_bytes)
+
         try:
-            res = self._loads(response)
-            return res
+            _1, _2, elen = bser.pdu_info(header)
+            if elen < len(header):
+                raise ValueError("invalid BSER payload length")
+            response = header + await self._read_exactly(elen - len(header))
+            return self._loads(response)
         except (ValueError, RecursionError) as e:
             raise WatchmanError("watchman response decode error: %s" % e)
+
+    async def _read_exactly(self, size):
+        buf = bytearray()
+        while len(buf) < size:
+            chunk = await self.transport.read(size - len(buf))
+            if not chunk:
+                raise ConnectionResetError("connection closed")
+            buf.extend(chunk)
+        return bytes(buf)
 
     async def send(self, *args):
         cmd = bser.dumps(*args, version=2, capabilities=0)
