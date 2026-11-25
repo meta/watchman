@@ -171,6 +171,17 @@ cpp_unittest(
 )
 
 cpp_unittest(
+    name = "structured_logger_exit",
+    srcs = ["StructuredLoggerExitTest.cpp"],
+    network_access = network_access_utils.none(),
+    supports_static_listing = False,
+    deps = [
+        "fbsource//xplat/folly/portability:gtest",
+        "//watchman/telemetry:telemetry",
+    ],
+)
+
+cpp_unittest(
     name = "log",
     srcs = ["LogTest.cpp"],
     network_access = network_access_utils.none(),

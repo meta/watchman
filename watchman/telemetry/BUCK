@@ -22,6 +22,7 @@ cpp_library(
         "WatchmanStructuredLogger.h",
     ],
     deps = [
+        "fbsource//xplat/folly:indestructible",
         "//eden/common/telemetry/facebook:xplat_logger_core",
         "//eden/fs/telemetry:xplat_logger",
         "//fb303:service_data",
