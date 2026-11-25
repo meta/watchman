@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <memory>
 #include "watchman/Errors.h"
 #include "watchman/fs/FileSystem.h"

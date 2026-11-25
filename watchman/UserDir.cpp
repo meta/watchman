@@ -7,7 +7,7 @@
 
 #include "watchman/UserDir.h"
 #include <eden/common/utils/StringConv.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <folly/String.h>
 #include <folly/portability/Unistd.h>
 #include "watchman/Logging.h"

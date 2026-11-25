@@ -6,7 +6,7 @@
  */
 
 #include "watchman/Options.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <string.h>
 #include "watchman/CommandRegistry.h"
 #include "watchman/LogConfig.h"

@@ -9,7 +9,7 @@
 
 #include <cstdlib>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <folly/ExceptionWrapper.h>
 #include <folly/SocketAddress.h>
