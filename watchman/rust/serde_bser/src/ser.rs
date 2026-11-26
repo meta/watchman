@@ -406,15 +406,21 @@ where
     #[inline]
     fn serialize_struct_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
+        _name: &'static str,
+        _variant_index: u32,
         variant: &'static str,
         len: usize,
     ) -> Result<Self::SerializeStructVariant> {
         // This is e.g. E { N { foo: A, bar: B } }, where N is the
         // variant. Serialize this as { variant: { foo: valA, bar: valB } }.
-        // That's really the same as serialize_tuple_variant.
-        self.serialize_tuple_variant(name, variant_index, variant, len)
+        // This must use the object form (not the tuple form), since the
+        // deserializer expects each field to be keyed by its name when
+        // decoding a struct variant.
+        self.maybe_flush()?;
+        self.scratch.push(BSER_OBJECT);
+        self.put_i8(1);
+        self.serialize_str(variant)?;
+        self.serialize_struct("", len)
     }
 }
 

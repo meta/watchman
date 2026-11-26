@@ -7,6 +7,7 @@
 
 use std::f64::consts;
 
+use serde::Deserialize;
 use serde::Serialize;
 
 use super::serialize;
@@ -34,7 +35,7 @@ const BASIC_SERIALIZED: &[u8] = b"\x00\x02\x00\x00\x00\x00\x04\xcb\x00\x01\x03\x
                                   test_enum_list\x00\x03\x03\x01\x03\x01\r\x03\x0bTestNewtype\
                                   \x02\x03\tBSER test\x01\x03\x01\r\x03\tTestTuple\x00\x03\x02\x03*\
                                   \x06\xff\xff\xff\xff\xff\xff\xff\x7f\x01\x03\x01\r\x03\n\
-                                  TestStruct\x00\x03\x02\r\x03\x03abc\n\r\x03\x03\
+                                  TestStruct\x01\x03\x02\r\x03\x03abc\n\r\x03\x03\
                                   def\r\x03\x04\xf0\x9f\x92\xa9";
 
 #[test]
@@ -56,4 +57,27 @@ fn test_basic_serialize() {
     let out = Vec::new();
     let out = serialize(out, to_serialize).unwrap();
     assert_eq!(out, BASIC_SERIALIZED);
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+enum RoundTripEnum {
+    TestUnit,
+    TestNewtype(String),
+    TestTuple(i8, u64),
+    TestStruct { abc: (), def: char },
+}
+
+#[test]
+fn test_struct_variant_round_trip() {
+    let to_serialize = RoundTripEnum::TestStruct {
+        abc: (),
+        def: '\u{1f4a9}',
+    };
+
+    let out = Vec::new();
+    let out = serialize(out, to_serialize.clone()).unwrap();
+
+    // The serialized form must be the object form: {"TestStruct": {"abc": ..., "def": ...}}
+    let decoded: RoundTripEnum = crate::from_slice(&out).unwrap();
+    assert_eq!(decoded, to_serialize);
 }
