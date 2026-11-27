@@ -138,6 +138,26 @@ class TestMatch(WatchmanTestCase.WatchmanTestCase):
         )
         self.assertFileListsEqual(res1["files"], res2["files"])
 
+    def test_multi_part_suffix(self) -> None:
+        root = self.mkdtemp()
+        self.touchRelative(root, "foo.d.ts")
+        self.touchRelative(root, "foo.ts")
+
+        self.watchmanCommand("watch", root)
+        self.assertFileList(root, ["foo.d.ts", "foo.ts"])
+
+        # Sets of fewer than three suffixes are matched differently from
+        # larger sets, including aggregated anyof terms, but must agree.
+        for expression in [
+            ["suffix", ["d.ts", "nomatch"]],
+            ["suffix", ["d.ts", "nomatch", "none"]],
+            ["anyof", ["suffix", "d.ts"], ["suffix", "nomatch"], ["suffix", "none"]],
+        ]:
+            res = self.watchmanCommand(
+                "query", root, {"expression": expression, "fields": ["name"]}
+            )
+            self.assertFileListsEqual(res["files"], ["foo.d.ts"])
+
     def test_suffix_expr(self) -> None:
         root = self.mkdtemp()
 
