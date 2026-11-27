@@ -9,6 +9,7 @@
 #include <folly/portability/GTest.h>
 #include <folly/test/TestUtils.h>
 #include "watchman/query/GlobTree.h"
+#include "watchman/query/LocalFileResult.h"
 #include "watchman/query/Query.h"
 #include "watchman/query/QueryExpr.h"
 #include "watchman/query/TermRegistry.h"
@@ -58,7 +59,49 @@ std::optional<std::vector<std::string>> expr_get_suffix_glob(
   return rv;
 }
 
+std::vector<std::string> expr_matching_names(std::string expression_json) {
+  auto expression = parse_json(expression_json);
+  if (!expression.has_value()) {
+    return {};
+  }
+  Query query;
+  auto expr = watchman::parseQueryExpr(&query, *expression);
+  std::vector<std::string> matched;
+  for (auto name : {"foo.d.ts", "FOO.D.TS", "d.ts", "foo."}) {
+    LocalFileResult file{
+        w_string{name}, ClockStamp{}, CaseSensitivity::CaseSensitive};
+    if (expr->evaluate(nullptr, &file).value_or(false)) {
+      matched.push_back(name);
+    }
+  }
+  return matched;
+}
+
 } // namespace
+
+TEST(SuffixQueryTest, multi_part_suffix) {
+  for (auto expression : {
+           R"( ["suffix", ["d.ts"]] )",
+           R"( ["suffix", ["d.ts", "a"]] )",
+           R"( ["suffix", ["d.ts", "a", "b"]] )",
+           R"( ["anyof", ["suffix", "D.TS"], ["suffix", "a"],
+                ["suffix", "b"]] )",
+       }) {
+    EXPECT_THAT(
+        expr_matching_names(expression), ElementsAre("foo.d.ts", "FOO.D.TS"))
+        << expression;
+  }
+}
+
+TEST(SuffixQueryTest, empty_suffix) {
+  for (auto expression : {
+           R"( ["suffix", [""]] )",
+           R"( ["suffix", ["", "a", "b"]] )",
+       }) {
+    EXPECT_THAT(expr_matching_names(expression), ElementsAre("foo."))
+        << expression;
+  }
+}
 
 TEST(SuffixQueryTest, false) {
   EXPECT_THAT(

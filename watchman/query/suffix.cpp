@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <unordered_set>
+#include <vector>
 
 using namespace watchman;
 
@@ -21,10 +22,18 @@ namespace {
 
 class SuffixExpr : public QueryExpr {
   std::unordered_set<w_string> suffixSet_;
+  // Suffixes the set lookup can't find, i.e. those containing a dot, and "".
+  std::vector<w_string> multiPartSuffixes_;
 
  public:
   explicit SuffixExpr(std::unordered_set<w_string>&& suffixSet)
-      : suffixSet_(std::move(suffixSet)) {}
+      : suffixSet_(std::move(suffixSet)) {
+    for (const auto& suffix : suffixSet_) {
+      if (suffix.empty() || suffix.piece().contains(".")) {
+        multiPartSuffixes_.push_back(suffix);
+      }
+    }
+  }
 
   EvaluateResult evaluate(QueryContextBase*, FileResult* file) override {
     if (suffixSet_.size() < 3) {
@@ -38,7 +47,15 @@ class SuffixExpr : public QueryExpr {
       return false;
     }
     auto suffix = file->baseName().asLowerCaseSuffix();
-    return suffix && (suffixSet_.find(*suffix) != suffixSet_.end());
+    if (suffix && suffixSet_.find(*suffix) != suffixSet_.end()) {
+      return true;
+    }
+    for (const auto& multiPartSuffix : multiPartSuffixes_) {
+      if (file->baseName().hasSuffix(multiPartSuffix)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   static std::unique_ptr<QueryExpr> parse(Query*, const json_ref& term) {
